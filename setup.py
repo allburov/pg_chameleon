@@ -49,7 +49,7 @@ setuptools.setup(
     ],
     install_requires=[
         'PyMySQL>=0.10.0',
-        'mysql-replication>=0.31',
+        'mysql-replication>=0.31,<0.45.1',
         'psycopg2-binary>=2.8.3',
         'PyYAML>=3.13',
         'tabulate>=0.8.1',
@@ -57,7 +57,6 @@ setuptools.setup(
         'rollbar>=0.13.17',
         'parsy>=2.1',
         'Sphinx>=7.4.7'
-
     ],
     include_package_data = True,
     package_data=package_data,
