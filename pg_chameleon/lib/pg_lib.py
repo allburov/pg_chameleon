@@ -3604,7 +3604,7 @@ class pg_engine(object):
             try:
                 self.pgsql_cur.execute(idx[1])
             except:
-                raise
+                pass
         for pk in pk_drop:
             self.logger.info("Dropping the primary key {}".format(pk[0],))
             try:
