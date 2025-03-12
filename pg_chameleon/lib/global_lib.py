@@ -8,7 +8,9 @@ import signal
 from shutil import copy
 from distutils.sysconfig import get_python_lib
 from tabulate import tabulate
-from pg_chameleon import pg_engine, mysql_source, pgsql_source
+from .pg_lib import pg_engine
+from .mysql_lib import mysql_source
+from .pg_lib import pgsql_source
 import logging
 from logging.handlers  import TimedRotatingFileHandler
 from daemonize import Daemonize
