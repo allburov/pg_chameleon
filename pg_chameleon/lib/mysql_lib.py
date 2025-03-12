@@ -541,6 +541,7 @@ class mysql_source(object):
         """
         self.logger.debug("rolling back")
         self.cursor_unbuffered.execute("ROLLBACK")
+        self.logger.debug("rolling back - finished")
 
     def make_tx_snapshot(self, schema, table):
         """
@@ -692,14 +693,18 @@ class mysql_source(object):
             self.end_tx()
         else:
             self.unlock_tables()
+        self.logger.debug("Closing unbuffered connection")
         self.cursor_unbuffered.close()
         self.disconnect_db_unbuffered()
         self.disconnect_db_buffered()
+        self.logger.debug("Closed unbuffered connection")
 
         try:
+            self.logger.debug("Removing the csv file %s" % out_file)
             remove(out_file)
         except:
             pass
+        self.logger.debug("Returning the master's coordinates")
         return master_status
 
     def insert_table_data(self, ins_arg):
