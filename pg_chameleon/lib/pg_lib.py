@@ -12,6 +12,9 @@ import binascii
 from distutils.sysconfig import get_python_lib
 import multiprocessing as mp
 
+from ..revi import get_dest_table
+
+
 class pg_encoder(json.JSONEncoder):
     def default(self, obj):
         if 	isinstance(obj, datetime.time) or \
@@ -1279,6 +1282,8 @@ class pg_engine(object):
         """
         self.pgsql_cur.execute(sql_pkey, (schema, table, ))
         table_pkey = self.pgsql_cur.fetchone()
+        if not table_pkey[0]:
+            return ['id']
         return table_pkey[0]
 
 
@@ -3869,6 +3874,8 @@ class pg_engine(object):
             :param table_pkey: a list with the primary key's columns. empty if there's no pkey
             :param master_status: the master status data .
         """
+        orig_table = table
+        table = get_dest_table(table)
         if master_status:
             master_data = master_status[0]
             binlog_file = master_data["File"]
@@ -4014,6 +4021,8 @@ class pg_engine(object):
         """
         self.pgsql_cur.execute(sql_get_pkey,(schema,table))
         pkey_col = self.pgsql_cur.fetchone()
+        if not pkey_col[0]:
+            return ['id']
         return pkey_col[0]
 
     def create_indices(self, schema, table, index_data):

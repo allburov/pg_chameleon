@@ -8,7 +8,8 @@ from pymysqlreplication import BinLogStreamReader
 from pymysqlreplication.event import QueryEvent, GtidEvent, HeartbeatLogEvent
 from pymysqlreplication.row_event import DeleteRowsEvent,UpdateRowsEvent,WriteRowsEvent
 from pymysqlreplication.event import RotateEvent
-from pg_chameleon import sql_token
+from .sql_util import sql_token
+from ..revi import get_dest_table
 from os import remove
 import re
 class mysql_source(object):
@@ -816,7 +817,8 @@ class mysql_source(object):
             loading_schema = self.schema_loading[schema]["loading"]
             destination_schema = self.schema_loading[schema]["destination"]
             table_list = self.schema_tables[schema]
-            for table in table_list:
+            for loading_table in table_list:
+                table = get_dest_table(loading_table)
                 self.logger.info("Copying the source table %s into %s.%s" %(table, loading_schema, table) )
                 try:
                     if self.keep_existing_schema:
@@ -827,7 +829,7 @@ class mysql_source(object):
                         self.pg_engine.cleanup_idx_cons(destination_schema,table)
                         self.logger.info("Truncating the table  %s.%s" %(destination_schema, table) )
                         self.pg_engine.truncate_table(destination_schema,table)
-                        master_status = self.copy_data(schema, table)
+                        master_status = self.copy_data(schema, loading_table)
                     else:
                         if self.copy_table_data:
                             master_status = self.copy_data(schema, table)
